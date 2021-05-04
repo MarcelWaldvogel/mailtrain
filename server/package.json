@@ -39,7 +39,7 @@
     "url-pattern": "^1.0.3"
   },
   "optionalDependencies": {
-    "posix": "^4.1.2"
+    "posix": "^4.2.0"
   },
   "dependencies": {
     "aws-sdk": "^2.601.0",
