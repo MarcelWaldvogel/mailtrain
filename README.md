@@ -37,7 +37,7 @@ to guarantee security and avoid XSS attacks in the multi-user settings. The func
 The recommended deployment of Mailtrain would use 3 DNS entries that all points to the **same** IP address. For example as follows:
 - *lists.example.com* - public endpoint (A record `lists` under `example.com` domain)
 - *mailtrain.example.com* - trusted endpoint (CNAME record `mailtrain` under `example.com` domain that points to `lists`)
-- *sbox.mailtrain.example.com* - sandbox endpoint (CNAME record `sbox.mailtrain` under `example.com` domain that points to `lists`)
+- *sbox-mailtrain.example.com* - sandbox endpoint (CNAME record `sbox-mailtrain` under `example.com` domain that points to `lists`)
 
 
 ### Installation on fresh CentOS 7 or Ubuntu 18.04 LTS (public website secured by SSL)
@@ -76,7 +76,7 @@ Thus, by running this script below, you agree with the Let's Encrypt's Terms of 
     cd /opt
     git clone https://github.com/Mailtrain-org/mailtrain.git
     cd mailtrain
-    git checkout development
+    git checkout v2
     ```
 
 4. Run the installation script. Replace the urls and your email address with the correct values. **NOTE** that running this script you agree
@@ -84,12 +84,12 @@ Thus, by running this script below, you agree with the Let's Encrypt's Terms of 
 
    For Centos 7 type:
     ```
-    bash setup/install-centos7-https.sh mailtrain.example.com sbox.mailtrain.example.com lists.example.com admin@example.com
+    bash setup/install-centos7-https.sh mailtrain.example.com sbox-mailtrain.example.com lists.example.com admin@example.com
     ```
 
    For Ubuntu 18.04 LTS type:
     ```
-    bash setup/install-ubuntu1804-https.sh mailtrain.example.com sbox.mailtrain.example.com lists.example.com admin@example.com
+    bash setup/install-ubuntu1804-https.sh mailtrain.example.com sbox-mailtrain.example.com lists.example.com admin@example.com
     ```
 
 5. Start Mailtrain and enable to be started by default when your server starts.
@@ -139,7 +139,7 @@ All endpoints (trusted, sandbox, public) will provide only HTTP as follows:
     cd /opt
     git clone https://github.com/Mailtrain-org/mailtrain.git
     cd mailtrain
-    git checkout development
+    git checkout v2
     ```
 
 4. Run the installation script. Replace the urls and your email address with the correct values. **NOTE** that running this script you agree
@@ -177,7 +177,7 @@ This setup starts a stack composed of Mailtrain, MongoDB, Redis, and MariaDB. It
 To make this publicly accessible, you should add reverse proxy that makes these endpoints publicly available over HTTPS. If using the proxy, you also need to set the URL bases and `--withProxy` parameter via `MAILTRAIN_SETTING` as shown below.
 An example of such proxy would be:
 - http://localhost:3000 -> https://mailtrain.example.com
-- http://localhost:3003 -> https://sbox.mailtrain.example.com
+- http://localhost:3003 -> https://sbox-mailtrain.example.com
 - http://localhost:3004 -> https://lists.example.com
 
 To deploy Mailtrain with Docker, you need the following two dependencies installed:
@@ -189,7 +189,7 @@ These are the steps to start Mailtrain via docker-compose:
 
 1. Download Mailtrain's docker-compose build file
     ```
-    curl -O https://raw.githubusercontent.com/Mailtrain-org/mailtrain/development/docker-compose.yml
+    curl -O https://raw.githubusercontent.com/Mailtrain-org/mailtrain/v2/docker-compose.yml
     ```
 
 2. Deploy Mailtrain via docker-compose (in the directory to which you downloaded the `docker-compose.yml` file). This will take quite some time when run for the first time. Subsequent executions will be fast.
@@ -269,6 +269,12 @@ variables (e.g. `URL_BASE_TRUSTED=https://mailtrain.domain.com (and more env-var
 | LDAP_UIDTAG      | LDAP UID tag (e.g. uid/cn/username)                                   |
 | WITH_ZONE_MTA    | enables or disables builtin Zone-MTA (default: true)                  |
 | POOL_NAME        | sets builtin Zone-MTA pool name (default: os.hostname())              |
+| WITH_CAS         | use if you want to use CAS                                            |
+| CAS_URL          | CAS base URL                                                          |
+| CAS_NAMETAG      | The field used to save the name (default: username)                   |
+| CAS_MAILTAG      | The field used to save the email (default: mail)                      |
+| CAS_NEWUSERROLE  | The role of new users (default: nobody)                               |
+| CAS_NEWUSERNAMESPACEID | The namespace id of new users (default: 1)                      |
 | LOG_LEVEL        | sets log level among `silly|verbose|info|http|warn|error|silent` (default: `info`) |
 
 If you don't want to modify the original `docker-compose.yml`, you can put your overrides to another file (e.g. `docker-compose.override.yml`) -- like the one below.
